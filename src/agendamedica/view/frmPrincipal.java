@@ -1,38 +1,14 @@
-package agendamedica.view;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+package agendamedica.view;
 
-/**
- *
- * @author anton
- */
-public class frmAgenda extends javax.swing.JFrame {
+import javax.swing.*;
+import java.awt.*;
 
-    /**
-     * Creates new form frmAgenda
-     */
-    public frmAgenda() {
+public class frmPrincipal extends JFrame{
+    public frmPrincipal() {
         setTitle("Agenda Médica");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 600);
@@ -47,7 +23,7 @@ public class frmAgenda extends javax.swing.JFrame {
         add(tabbedPane);
         setVisible(true);
     }
-    
+
     private JPanel criarPainelAgenda() {
         JPanel painelAgenda = new JPanel();
         painelAgenda.setLayout(new BorderLayout());
@@ -152,27 +128,6 @@ public class frmAgenda extends javax.swing.JFrame {
         return painelProntuario;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 480, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 388, Short.MAX_VALUE)
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
     public static void main(String[] args) {
         SwingUtilities.invokeLater(frmPrincipal::new);
     }
