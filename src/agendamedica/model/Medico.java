@@ -17,6 +17,22 @@ public class Medico extends Usuario{
         this.crm = crm;
         this.especializacao = especializacao;
     }
+
+    public String getCrm() {
+        return crm;
+    }
+
+    public void setCrm(String crm) {
+        this.crm = crm;
+    }
+
+    public String getEspecializacao() {
+        return especializacao;
+    }
+
+    public void setEspecializacao(String especializacao) {
+        this.especializacao = especializacao;
+    }
     
     
 }

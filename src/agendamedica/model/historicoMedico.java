@@ -8,14 +8,38 @@ package agendamedica.model;
  *
  * @author anton
  */
-public class historicoMedico {
+public class HistoricoMedico {
     protected int id;
     protected String nomePaciente;
     protected String relatorio;
 
-    public historicoMedico(int id, String nomePaciente, String relatorio) {
+    public HistoricoMedico(int id, String nomePaciente, String relatorio) {
         this.id = id;
         this.nomePaciente = nomePaciente;
+        this.relatorio = relatorio;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNomePaciente() {
+        return nomePaciente;
+    }
+
+    public void setNomePaciente(String nomePaciente) {
+        this.nomePaciente = nomePaciente;
+    }
+
+    public String getRelatorio() {
+        return relatorio;
+    }
+
+    public void setRelatorio(String relatorio) {
         this.relatorio = relatorio;
     }
     

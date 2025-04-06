@@ -16,6 +16,12 @@ public class Paciente extends Usuario{
         this.codPaciente = codPaciente;
     }
 
-    
-    
+    public int getCodPaciente() {
+        return codPaciente;
+    }
+
+    public void setCodPaciente(int codPaciente) {
+        this.codPaciente = codPaciente;
+    }
+
 }
