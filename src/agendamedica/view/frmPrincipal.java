@@ -18,7 +18,8 @@ public class frmPrincipal extends JFrame{
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Agenda", criarPainelAgenda());
         tabbedPane.addTab("Prontuário", criarPainelProntuario());
-        tabbedPane.addTab("Nova Consulta", new JPanel()); // Placeholder
+        tabbedPane.addTab("Nova Consulta", criarPainelNovaConsulta());
+        tabbedPane.addTab("Cadastrar Paciente", new JPanel()); // Placeholder
 
         add(tabbedPane);
         setVisible(true);
@@ -62,21 +63,21 @@ public class frmPrincipal extends JFrame{
     }
 
     private JPanel criarPainelProntuario() {
-        JPanel painelProntuario = new JPanel();
-        painelProntuario.setLayout(new BoxLayout(painelProntuario, BoxLayout.Y_AXIS));
+        JPanel painelProntuario = new JPanel(new BorderLayout());
         painelProntuario.setBackground(Color.LIGHT_GRAY);
         painelProntuario.setBorder(BorderFactory.createEmptyBorder(20, 30, 30, 30));
 
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBackground(Color.LIGHT_GRAY);
+
         JLabel nome = new JLabel("JUBILEU DA SILVA");
         nome.setFont(new Font("SansSerif", Font.BOLD, 28));
-        nome.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nome.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel dataNascimento = new JLabel("12/02/2004");
-        dataNascimento.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel sexo = new JLabel("Sexo: Masculino");
-        sexo.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel cpf = new JLabel("CPF: 123.456.324-01");
-        cpf.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         Font infoFont = new Font("SansSerif", Font.PLAIN, 18);
         dataNascimento.setFont(infoFont);
@@ -101,7 +102,6 @@ public class frmPrincipal extends JFrame{
         relatorio.setBackground(Color.WHITE);
         relatorio.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Painel para deixar o JTextArea com canto arredondado
         JPanel painelTexto = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -115,17 +115,96 @@ public class frmPrincipal extends JFrame{
         painelTexto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         painelTexto.add(relatorio);
 
-        painelProntuario.add(nome);
-        painelProntuario.add(Box.createVerticalStrut(10));
-        painelProntuario.add(dataNascimento);
-        painelProntuario.add(sexo);
-        painelProntuario.add(cpf);
-        painelProntuario.add(tituloProntuario);
-        painelProntuario.add(subTitulo);
-        painelProntuario.add(Box.createVerticalStrut(10));
-        painelProntuario.add(painelTexto);
+        infoPanel.add(nome);
+        infoPanel.add(Box.createVerticalStrut(10));
+        infoPanel.add(dataNascimento);
+        infoPanel.add(sexo);
+        infoPanel.add(cpf);
+        infoPanel.add(tituloProntuario);
+        infoPanel.add(subTitulo);
+        infoPanel.add(Box.createVerticalStrut(10));
+
+        painelProntuario.add(infoPanel, BorderLayout.NORTH);
+        painelProntuario.add(painelTexto, BorderLayout.CENTER);
 
         return painelProntuario;
+    }
+
+    private JPanel criarPainelNovaConsulta() {
+        JPanel painelNovaConsulta = new JPanel();
+        painelNovaConsulta.setLayout(new GridBagLayout());
+        painelNovaConsulta.setBackground(Color.LIGHT_GRAY);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 20, 10, 20);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        Font labelFont = new Font("SansSerif", Font.PLAIN, 20);
+
+        JLabel cpfLabel = new JLabel("CPF:");
+        cpfLabel.setFont(labelFont);
+        painelNovaConsulta.add(cpfLabel, gbc);
+
+        gbc.gridy++;
+        JTextField cpfField = criarCampoArredondado();
+        painelNovaConsulta.add(cpfField, gbc);
+
+        gbc.gridy++;
+        JLabel tipoLabel = new JLabel("Tipo de consulta:");
+        tipoLabel.setFont(labelFont);
+        painelNovaConsulta.add(tipoLabel, gbc);
+
+        gbc.gridy++;
+        JTextField tipoField = criarCampoArredondado();
+        painelNovaConsulta.add(tipoField, gbc);
+
+        gbc.gridy++;
+        JLabel medicoLabel = new JLabel("Médicos disponíveis:");
+        medicoLabel.setFont(labelFont);
+        painelNovaConsulta.add(medicoLabel, gbc);
+
+        gbc.gridy++;
+        JTextField medicoField = criarCampoArredondado();
+        painelNovaConsulta.add(medicoField, gbc);
+
+        gbc.gridy++;
+        JLabel dataLabel = new JLabel("Datas disponíveis:");
+        dataLabel.setFont(labelFont);
+        painelNovaConsulta.add(dataLabel, gbc);
+
+        gbc.gridy++;
+        JTextField dataField = criarCampoArredondado();
+        painelNovaConsulta.add(dataField, gbc);
+
+        return painelNovaConsulta;
+    }
+
+    private JTextField criarCampoArredondado() {
+        JTextField campo = new JTextField(20) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+                super.paintComponent(g);
+                g2.dispose();
+            }
+
+            @Override
+            protected void paintBorder(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setColor(Color.MAGENTA);
+                g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 30, 30);
+                g2.dispose();
+            }
+        };
+        campo.setOpaque(false);
+        campo.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        campo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        return campo;
     }
 
     public static void main(String[] args) {

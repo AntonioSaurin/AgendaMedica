@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package agendamedica;
-import agendamedica.view.frmAgenda;
+import agendamedica.view.frmPrincipal;
 import javax.swing.JFrame;
 /**
  *
@@ -15,7 +15,7 @@ public class AgendaMedica {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        JFrame teste = new frmAgenda();
+        JFrame teste = new frmPrincipal();
         teste.setVisible(true);
     }
     
