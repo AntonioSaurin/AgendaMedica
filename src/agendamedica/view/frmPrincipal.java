@@ -6,8 +6,13 @@ package agendamedica.view;
 
 import javax.swing.*;
 import java.awt.*;
+import org.jdatepicker.impl.*;
+import java.util.Properties;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
-public class frmPrincipal extends JFrame{
+public class frmPrincipal extends JFrame {
+
     public frmPrincipal() {
         setTitle("Agenda Médica");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -19,7 +24,7 @@ public class frmPrincipal extends JFrame{
         tabbedPane.addTab("Agenda", criarPainelAgenda());
         tabbedPane.addTab("Prontuário", criarPainelProntuario());
         tabbedPane.addTab("Nova Consulta", criarPainelNovaConsulta());
-        tabbedPane.addTab("Cadastrar Paciente", new JPanel()); // Placeholder
+        tabbedPane.addTab("Cadastrar Paciente", criarPainelCadastrarPaciente());
 
         add(tabbedPane);
         setVisible(true);
@@ -34,25 +39,29 @@ public class frmPrincipal extends JFrame{
         titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
         titulo.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 0));
 
-        JLabel subTitulo = new JLabel("Segunda");
-        subTitulo.setFont(new Font("SansSerif", Font.BOLD, 22));
-        subTitulo.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 0));
-
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         headerPanel.setBackground(Color.LIGHT_GRAY);
         headerPanel.add(titulo);
-        headerPanel.add(subTitulo);
 
         JPanel blocosPanel = new JPanel(new GridLayout(1, 7, 20, 0));
         blocosPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
         blocosPanel.setBackground(Color.LIGHT_GRAY);
 
+        String[] dias = {"Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"};
+
         for (int i = 0; i < 7; i++) {
             JPanel bloco = new JPanel();
+            bloco.setLayout(new BorderLayout());
             bloco.setPreferredSize(new Dimension(80, 200));
             bloco.setBackground(Color.DARK_GRAY);
             bloco.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+            JLabel diaLabel = new JLabel(dias[i], SwingConstants.CENTER);
+            diaLabel.setForeground(Color.WHITE);
+            diaLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+            bloco.add(diaLabel, BorderLayout.NORTH);
+
             blocosPanel.add(bloco);
         }
 
@@ -113,7 +122,7 @@ public class frmPrincipal extends JFrame{
         };
         painelTexto.setBackground(Color.WHITE);
         painelTexto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        painelTexto.add(relatorio);
+        painelTexto.add(relatorio, BorderLayout.CENTER);
 
         infoPanel.add(nome);
         infoPanel.add(Box.createVerticalStrut(10));
@@ -131,55 +140,117 @@ public class frmPrincipal extends JFrame{
     }
 
     private JPanel criarPainelNovaConsulta() {
-        JPanel painelNovaConsulta = new JPanel();
-        painelNovaConsulta.setLayout(new GridBagLayout());
+        JPanel painelNovaConsulta = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 20));
         painelNovaConsulta.setBackground(Color.LIGHT_GRAY);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 20, 10, 20);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBackground(Color.LIGHT_GRAY);
 
         Font labelFont = new Font("SansSerif", Font.PLAIN, 20);
 
         JLabel cpfLabel = new JLabel("CPF:");
         cpfLabel.setFont(labelFont);
-        painelNovaConsulta.add(cpfLabel, gbc);
+        formPanel.add(cpfLabel);
+        formPanel.add(Box.createVerticalStrut(5));
+        formPanel.add(criarCampoArredondado());
+        formPanel.add(Box.createVerticalStrut(15));
 
-        gbc.gridy++;
-        JTextField cpfField = criarCampoArredondado();
-        painelNovaConsulta.add(cpfField, gbc);
-
-        gbc.gridy++;
         JLabel tipoLabel = new JLabel("Tipo de consulta:");
         tipoLabel.setFont(labelFont);
-        painelNovaConsulta.add(tipoLabel, gbc);
+        formPanel.add(tipoLabel);
+        formPanel.add(Box.createVerticalStrut(5));
+        formPanel.add(criarCampoArredondado());
+        formPanel.add(Box.createVerticalStrut(15));
 
-        gbc.gridy++;
-        JTextField tipoField = criarCampoArredondado();
-        painelNovaConsulta.add(tipoField, gbc);
-
-        gbc.gridy++;
         JLabel medicoLabel = new JLabel("Médicos disponíveis:");
         medicoLabel.setFont(labelFont);
-        painelNovaConsulta.add(medicoLabel, gbc);
+        formPanel.add(medicoLabel);
+        formPanel.add(Box.createVerticalStrut(5));
+        formPanel.add(criarCampoArredondado());
+        formPanel.add(Box.createVerticalStrut(15));
 
-        gbc.gridy++;
-        JTextField medicoField = criarCampoArredondado();
-        painelNovaConsulta.add(medicoField, gbc);
-
-        gbc.gridy++;
         JLabel dataLabel = new JLabel("Datas disponíveis:");
         dataLabel.setFont(labelFont);
-        painelNovaConsulta.add(dataLabel, gbc);
+        formPanel.add(dataLabel);
+        formPanel.add(Box.createVerticalStrut(5));
 
-        gbc.gridy++;
-        JTextField dataField = criarCampoArredondado();
-        painelNovaConsulta.add(dataField, gbc);
+        UtilDateModel model = new UtilDateModel();
+        model.setSelected(true);
 
+        Properties p = new Properties();
+        p.put("text.today", "Hoje");
+        p.put("text.month", "Mês");
+        p.put("text.year", "Ano");
+
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePicker.setBackground(Color.WHITE);
+        formPanel.add(datePicker);
+
+        formPanel.add(Box.createVerticalStrut(25));
+
+        JButton salvarButton = new JButton("Salvar");
+        salvarButton.setFont(new Font("SansSerif", Font.BOLD, 18));
+        salvarButton.setBackground(Color.BLACK);
+        salvarButton.setForeground(Color.WHITE);
+        salvarButton.setFocusPainted(false);
+        salvarButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        formPanel.add(salvarButton);
+
+        painelNovaConsulta.add(formPanel);
         return painelNovaConsulta;
+    }
+
+    private JPanel criarPainelCadastrarPaciente() {
+        JPanel painel = new JPanel(new GridLayout(4, 2, 40, 20));
+        painel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        painel.setBackground(Color.LIGHT_GRAY);
+
+        Font labelFont = new Font("SansSerif", Font.PLAIN, 20);
+        JTextField nomeField = criarCampoArredondado();
+        JTextField cpfField = criarCampoArredondado();
+        JTextField nascimentoField = criarCampoArredondado();
+        JTextField sexoField = criarCampoArredondado();
+        JTextField senhaField = criarCampoArredondado();
+        JTextField confirmaSenhaField = criarCampoArredondado();
+
+        painel.add(criarCampoComLabel("Nome:", nomeField, labelFont));
+        painel.add(criarCampoComLabel("Crie uma senha:", senhaField, labelFont));
+        painel.add(criarCampoComLabel("CPF:", cpfField, labelFont));
+        painel.add(criarCampoComLabel("Confirme a senha:", confirmaSenhaField, labelFont));
+        painel.add(criarCampoComLabel("Data de nascimento:", nascimentoField, labelFont));
+        painel.add(criarCampoComLabel("Sexo:", sexoField, labelFont));
+
+        JButton cadastrarButton = new JButton("Cadastrar");
+        cadastrarButton.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        cadastrarButton.setBackground(Color.WHITE);
+        cadastrarButton.setFocusPainted(false);
+        JPanel botaoPanel = new JPanel();
+        botaoPanel.setBackground(Color.LIGHT_GRAY);
+        botaoPanel.add(cadastrarButton);
+
+        JPanel container = new JPanel(new BorderLayout());
+        container.setBackground(Color.LIGHT_GRAY);
+        container.add(painel, BorderLayout.CENTER);
+        container.add(botaoPanel, BorderLayout.SOUTH);
+
+        return container;
+    }
+
+    private JPanel criarCampoComLabel(String texto, JComponent campo, Font font) {
+        JPanel painel = new JPanel();
+        painel.setLayout(new BoxLayout(painel, BoxLayout.Y_AXIS));
+        painel.setBackground(Color.LIGHT_GRAY);
+
+        JLabel label = new JLabel(texto);
+        label.setFont(font);
+
+        painel.add(label);
+        painel.add(Box.createVerticalStrut(5));
+        painel.add(campo);
+
+        return painel;
     }
 
     private JTextField criarCampoArredondado() {
@@ -196,7 +267,7 @@ public class frmPrincipal extends JFrame{
             @Override
             protected void paintBorder(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setColor(Color.MAGENTA);
+                g2.setColor(Color.BLACK);
                 g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 30, 30);
                 g2.dispose();
             }
@@ -210,4 +281,24 @@ public class frmPrincipal extends JFrame{
     public static void main(String[] args) {
         SwingUtilities.invokeLater(frmPrincipal::new);
     }
+
+    public class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
+        private final String datePattern = "dd/MM/yyyy";
+        private final SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+
+        @Override
+        public Object stringToValue(String text) throws java.text.ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) {
+            if (value != null) {
+                Calendar cal = (Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+            return "";
+        }
+    }
 }
+

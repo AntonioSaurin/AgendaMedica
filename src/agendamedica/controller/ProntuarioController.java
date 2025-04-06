@@ -3,14 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package agendamedica.controller;
-import agendamedica.model.HistoricoMedico;
+import agendamedica.model.Prontuario;
 /**
  *
  * @author anton
  */
-public class HistoricoMedicoController extends HistoricoMedico{
+public class ProntuarioController extends Prontuario{
 
-    public HistoricoMedicoController(int id, String nomePaciente, String relatorio) {
+    public ProntuarioController(int id, String nomePaciente, String relatorio) {
         super(id, nomePaciente, relatorio);
     }
     
