@@ -25,6 +25,9 @@ public class Usuario {
         this.sexo = sexo;
     }
 
+    public Usuario() {
+    }
+    
     public int getId() {
         return id;
     }
