@@ -87,4 +87,38 @@ public class ConsultaDAO {
 
         return lista;
     }
+     
+        public List<Consulta> buscarConsultasPorCpf(String cpf) {
+        List<Consulta> lista = new ArrayList<>();
+
+        String sql = "SELECT c.id, c.dtConsulta, c.horaConsulta, c.status, c.tipoConsulta " +
+                     "FROM Consulta c " +
+                     "JOIN Paciente p ON c.paciente_id = p.usuario_id " +
+                     "JOIN Usuario u ON p.usuario_id = u.id " +
+                     "WHERE u.cpf = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int ID = rs.getInt("id");
+                LocalDate data = rs.getDate("dtConsulta").toLocalDate();
+                LocalTime hora = rs.getTime("horaConsulta").toLocalTime();
+                String status = rs.getString("status");
+                String tipo = rs.getString("tipoConsulta");
+
+                Consulta consulta = new Consulta(ID, data, hora, status, tipo);
+                lista.add(consulta);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao buscar consultas por CPF: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return lista;
+    }
 }

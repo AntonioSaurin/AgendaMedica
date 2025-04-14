@@ -44,6 +44,7 @@ public class frmPrincipal extends JFrame {
         tabbedPane.addTab("Agenda", criarPainelAgenda());
         tabbedPane.addTab("Prontuário", criarPainelProntuario());
         tabbedPane.addTab("Nova Consulta", criarPainelNovaConsulta());
+        tabbedPane.addTab("Ver Agenda do Paciente / Cancelar Consulta", criarPainelCancelarConsulta());
         tabbedPane.addTab("Cadastrar Paciente", criarPainelCadastrarPaciente());
 
         add(tabbedPane);
@@ -300,7 +301,7 @@ public class frmPrincipal extends JFrame {
         boolean sucesso = controller.marcarConsulta(consulta, idMedico, idPaciente);
 
         if (sucesso) {
-            JOptionPane.showMessageDialog(null, "Consulta marcada com sucesso!");
+            JOptionPane.showMessageDialog(null, "Consulta marcada com sucesso!" );
         } else {
             JOptionPane.showMessageDialog(null, "Erro ao marcar consulta.");
         }
@@ -395,6 +396,92 @@ public class frmPrincipal extends JFrame {
 
         return container;
     }
+    
+      private JPanel criarPainelCancelarConsulta() {
+        JPanel painelCancelarConsulta = new JPanel(new GridLayout(4, 2, 40, 20));
+        painelCancelarConsulta.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        painelCancelarConsulta.setBackground(Color.LIGHT_GRAY);
+       
+            JLabel titulo = new JLabel("Minhas Consultas");
+            titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
+            titulo.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 0));
+
+            JTextField campoCPF = new JTextField(15);
+            JButton botaoBuscar = new JButton("Buscar");
+            JButton botaoDesmarcar = new JButton("Desmarcar Consulta");
+
+            String[] colunas = {"ID", "Data", "Hora", "Tipo"};
+            DefaultTableModel tableModel = new DefaultTableModel(colunas, 0);
+            JTable tabela = new JTable(tableModel);
+            JScrollPane scrollPane = new JScrollPane(tabela);
+
+            JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            topPanel.setBackground(Color.LIGHT_GRAY);
+            topPanel.add(titulo);
+            topPanel.add(Box.createHorizontalStrut(30));
+            topPanel.add(new JLabel("CPF:"));
+            topPanel.add(campoCPF);
+            topPanel.add(botaoBuscar);
+
+            JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            bottomPanel.setBackground(Color.LIGHT_GRAY);
+            bottomPanel.add(botaoDesmarcar);
+
+            painelCancelarConsulta.add(topPanel, BorderLayout.NORTH);
+            painelCancelarConsulta.add(scrollPane, BorderLayout.CENTER);
+            painelCancelarConsulta.add(bottomPanel, BorderLayout.SOUTH);
+
+             botaoBuscar.addActionListener(e -> {
+        String cpf = campoCPF.getText().trim();
+        if (cpf.isEmpty()) {
+            JOptionPane.showMessageDialog(painelCancelarConsulta, "Digite o CPF.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            ConsultaDAO consultaDAO = new ConsultaDAO();
+            List<Consulta> consultas = consultaDAO.buscarConsultasPorCpf(cpf);
+
+            tableModel.setRowCount(0);
+            for (Consulta c : consultas) {
+                tableModel.addRow(new Object[]{
+                    c.getId(),
+                    c.getDtConsulta(),
+                    c.getHrConsulta(),
+                    c.getTipoConsulta()
+                });
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(painelCancelarConsulta, "Erro ao buscar consultas: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    });
+
+    botaoDesmarcar.addActionListener(e -> {
+        int linhaSelecionada = tabela.getSelectedRow();
+        if (linhaSelecionada == -1) {
+            JOptionPane.showMessageDialog(painelCancelarConsulta, "Selecione uma consulta para desmarcar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int idConsulta = (int) tableModel.getValueAt(linhaSelecionada, 0);
+
+        int confirm = JOptionPane.showConfirmDialog(painelCancelarConsulta, "Tem certeza que deseja desmarcar a consulta?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                ConsultaDAO consultaDAO = new ConsultaDAO();
+                consultaDAO.desmarcarConsulta(idConsulta);
+                tableModel.removeRow(linhaSelecionada);
+                JOptionPane.showMessageDialog(painelCancelarConsulta, "Consulta desmarcada com sucesso!");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(painelCancelarConsulta, "Erro ao desmarcar consulta: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    });
+        return painelCancelarConsulta;
+      }
 
     private JPanel criarCampoComLabel(String texto, JComponent campo, Font font) {
         JPanel painel = new JPanel();
